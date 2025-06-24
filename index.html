@@ -11,13 +11,13 @@
       font-family: sans-serif;
       background-color: #f5f5f5;
     }
-    /* 共通の中央揃えコンテナ */
-    .container {
+    /* ホーム画面用の中央揃えコンテナ */
+    #homeContainer {
       max-width: 600px;
       margin: 40px auto;
       box-sizing: border-box;
     }
-    /* ホーム画面スタイル */
+    /* ホームセクションのスタイル */
     #home {
       background-color: #ffcccc; /* 薄赤色 */
       color: #000000; /* 文字は全て黒色 */
@@ -52,14 +52,13 @@
       font-size: 0.9em;
       margin-top: 10px;
     }
-    /* プロジェクト画面スタイル */
+    /* プロジェクトセクションのスタイル */
     #project {
       display: none;
-      background-color: #ffffff;
-      border: 1px solid #ddd;
-      border-radius: 8px;
+      text-align: left;
       padding: 20px;
-      text-align: center;
+      margin: 0;
+      /* ページ全体左端に揃えるため、コンテナは使用しない */
     }
     #project h1 {
       font-size: 2em;
@@ -86,14 +85,14 @@
   </style>
   <script>
     function showProject() {
-      document.getElementById("home").style.display = "none";
+      document.getElementById("homeContainer").style.display = "none";
       document.getElementById("project").style.display = "block";
     }
   </script>
 </head>
 <body>
-  <div class="container">
-    <!-- ホームセクション -->
+  <!-- ホームセクション -->
+  <div id="homeContainer">
     <section id="home">
       <div class="header">Emn-info.</div>
       <div class="image-container">
@@ -108,24 +107,24 @@
       <a class="enter-link" onclick="showProject()">ENTER</a>
       <p class="footer">(P) 2025 Emn info.</p>
     </section>
-
-    <!-- プロジェクトセクション -->
-    <section id="project">
-      <h1>project_evanerd</h1>
-      <p>
-        いつも応援してくれてる人に、<br>
-        えがおで(E)<br>
-        門前構えて(m)<br>
-        入場させる(n)
-      </p>
-      <nav>
-        <ul>
-          <li><a href="#">八掛通信</a></li>
-          <li><a href="#">取扱説明書</a></li>
-          <li><a href="#">経歴</a></li>
-        </ul>
-      </nav>
-    </section>
   </div>
+
+  <!-- プロジェクトセクション（左端に揃える） -->
+  <section id="project">
+    <h1>project_evanerd</h1>
+    <p>
+      いつも応援してくれてる人に、<br>
+      えがおで(E)<br>
+      門前構えて(m)<br>
+      入場させる(n)
+    </p>
+    <nav>
+      <ul>
+        <li><a href="#">八掛通信</a></li>
+        <li><a href="#">取扱説明書</a></li>
+        <li><a href="#">経歴</a></li>
+      </ul>
+    </nav>
+  </section>
 </body>
 </html>
