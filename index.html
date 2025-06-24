@@ -22,22 +22,14 @@
       border-radius: 8px;
       width: 80%;
       max-width: 600px;
+      height: 600px; /* 縦に長い長方形に設定 */
       text-align: center;
       line-height: 1.6;
-      /* 縦長にするために最低の高さを設定 */
-      min-height: 400px;
-    }
-    .enter-link {
-      display: inline-block;
-      margin-top: 20px;
-      color: blue; /* ENTERは青文字 */
-      font-weight: bold;
-      text-decoration: none;
-      cursor: pointer;
-    }
-    .footer {
-      margin-top: 10px;
-      font-size: 0.9em;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      box-sizing: border-box;
     }
     .header {
       font-size: 1.5em;
@@ -49,18 +41,36 @@
       height: auto;
       margin-bottom: 10px;
     }
+    .content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .enter-link {
+      color: blue; /* ENTERは青文字 */
+      font-weight: bold;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .footer {
+      font-size: 0.9em;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
   <div class="message-box">
     <div class="header">Emn-info.</div>
     <div class="image-container">
-      <img src="https://github.com/Emon2358/Emn-info./blob/main/images%20(2).jpeg" alt="Emn-info Image">
+      <img src="https://raw.githubusercontent.com/Emon2358/Emn-info./main/images%20(2).jpeg" alt="Emn-info Image">
     </div>
-    <p>
-      衛門からのメッセージ。ここは衛門(L1nda)が活動している場所、事などをまとめているサイトです。<br>
-      来るもの拒まず、土足でどうぞ。ただし雑巾がけはしてください☆。
-    </p>
+    <div class="content">
+      <p>
+        衛門からのメッセージ。ここは衛門(L1nda)が活動している場所、事などをまとめているサイトです。<br>
+        来るもの拒まず、土足でどうぞ。ただし雑巾がけはしてください☆。
+      </p>
+    </div>
     <a href="#" class="enter-link">ENTER</a>
     <p class="footer">(P) 2025 Emn info.</p>
   </div>
