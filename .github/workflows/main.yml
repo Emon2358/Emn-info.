@@ -1,0 +1,83 @@
+name: Wayback Machine Scraper
+
+on:
+  workflow_dispatch:      # 手動実行のみ
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests beautifulsoup4 waybackpy
+    
+    - name: Run scraper
+      run: |
+        cat << 'EOF' > scraper.py
+        import os
+        import json
+        from datetime import datetime
+        from waybackpy import WaybackMachineCDXServerAPI
+        import requests
+        from bs4 import BeautifulSoup
+        
+        URL = "http://www1.rocketbbs.com/310/tabemono.html"
+        
+        def get_snapshots():
+            user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+            cdx = WaybackMachineCDXServerAPI(URL, user_agent)
+            snapshots = cdx.snapshots()
+            return sorted(snapshots, key=lambda x: x.timestamp)
+        
+        def fetch_content(snapshot):
+            archive_url = f"https://web.archive.org/web/{snapshot.timestamp}/{URL}"
+            response = requests.get(archive_url)
+            response.encoding = 'utf-8'  # または 'shift-jis' など適切なエンコーディング
+            return response.text
+        
+        def create_readme(snapshots_content):
+            output_dir = "tbmn bbs archive"
+            os.makedirs(output_dir, exist_ok=True)
+            
+            with open(f"{output_dir}/README.md", "w", encoding="utf-8") as f:
+                f.write("# Tabemono BBS Archive\n\n")
+                for timestamp, content in snapshots_content:
+                    date = datetime.strptime(timestamp, "%Y%m%d%H%M%S").strftime("%Y-%m-%d %H:%M:%S")
+                    f.write(f"## Snapshot: {date}\n\n")
+                    
+                    soup = BeautifulSoup(content, 'html.parser')
+                    # ここでHTMLから必要なコンテンツを抽出
+                    # 実際のスクレイピングロジックはサイトの構造に応じて調整が必要
+                    f.write(f"```\n{soup.get_text()}\n```\n\n")
+        
+        def main():
+            snapshots = get_snapshots()
+            snapshots_content = []
+            
+            for snapshot in snapshots:
+                content = fetch_content(snapshot)
+                snapshots_content.append((snapshot.timestamp, content))
+            
+            create_readme(snapshots_content)
+        
+        if __name__ == "__main__":
+            main()
+        EOF
+        python scraper.py
+    
+    - name: Commit and push if changed
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add "tbmn bbs archive"
+        git commit -m "Update BBS archive $(date +'%Y-%m-%d')" || exit 0
+        git push
