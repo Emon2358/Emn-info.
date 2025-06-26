@@ -1,7 +1,24 @@
-name: Wayback Machine Scraper
+name: Wayback Machine BBS Scraper
 
 on:
-  workflow_dispatch:      # 手動実行のみ
+  workflow_dispatch:
+    inputs:
+      bbs_url:
+        description: 'スクレイピングする掲示板のURL'
+        required: true
+        type: string
+      folder_name:
+        description: '保存先フォルダ名'
+        required: true
+        type: string
+      readme_name:
+        description: 'READMEファイル名（.mdは自動で付加）'
+        required: true
+        type: string
+      domain_name:
+        description: '掲示板のドメイン名（タイトルに使用）'
+        required: true
+        type: string
 
 jobs:
   scrape:
@@ -26,17 +43,25 @@ jobs:
         import os
         import json
         import chardet
+        import sys
         from datetime import datetime
         from waybackpy import WaybackMachineCDXServerAPI
         import requests
         from bs4 import BeautifulSoup
         import logging
+        import argparse
 
         # ロギング設定
         logging.basicConfig(level=logging.INFO)
         logger = logging.getLogger(__name__)
         
-        URL = "http://www1.rocketbbs.com/310/tabemono.html"
+        def parse_arguments():
+            parser = argparse.ArgumentParser()
+            parser.add_argument('--url', required=True, help='Target BBS URL')
+            parser.add_argument('--folder', required=True, help='Output folder name')
+            parser.add_argument('--readme', required=True, help='README file name')
+            parser.add_argument('--domain', required=True, help='Domain name for title')
+            return parser.parse_args()
         
         def detect_encoding(content):
             """
@@ -68,14 +93,14 @@ jobs:
             logger.error("Failed to decode content with all encodings")
             return content.decode('utf-8', errors='replace')
 
-        def get_snapshots():
+        def get_snapshots(url):
             user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
-            cdx = WaybackMachineCDXServerAPI(URL, user_agent)
+            cdx = WaybackMachineCDXServerAPI(url, user_agent)
             snapshots = cdx.snapshots()
             return sorted(snapshots, key=lambda x: x.timestamp)
         
-        def fetch_content(snapshot):
-            archive_url = f"https://web.archive.org/web/{snapshot.timestamp}/{URL}"
+        def fetch_content(snapshot, url):
+            archive_url = f"https://web.archive.org/web/{snapshot.timestamp}/{url}"
             logger.info(f"Fetching content from: {archive_url}")
             
             response = requests.get(archive_url)
@@ -112,12 +137,16 @@ jobs:
             lines = [line for line in lines if line]
             return '\n'.join(lines)
         
-        def create_readme(snapshots_content):
-            output_dir = "tbmn bbs archive"
+        def create_readme(snapshots_content, args):
+            output_dir = args.folder
             os.makedirs(output_dir, exist_ok=True)
             
-            with open(f"{output_dir}/README.md", "w", encoding="utf-8") as f:
-                f.write("# Tabemono BBS Archive\n\n")
+            readme_path = f"{output_dir}/{args.readme}.md"
+            with open(readme_path, "w", encoding="utf-8") as f:
+                f.write(f"# {args.domain} BBS Archive\n\n")
+                f.write(f"Original URL: {args.url}\n\n")
+                f.write(f"Archive created: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')} UTC\n\n")
+                
                 for timestamp, content in snapshots_content:
                     date = datetime.strptime(timestamp, "%Y%m%d%H%M%S").strftime("%Y-%m-%d %H:%M:%S")
                     f.write(f"## Snapshot: {date}\n\n")
@@ -128,36 +157,46 @@ jobs:
                     text = clean_text(soup.get_text())
                     f.write(f"```\n{text}\n```\n\n")
                     
-                    # デバッグ情報の追加
-                    f.write(f"Archive URL: https://web.archive.org/web/{timestamp}/{URL}\n\n")
+                    # アーカイブURLの追加
+                    f.write(f"Archive URL: https://web.archive.org/web/{timestamp}/{args.url}\n\n")
                     f.write("---\n\n")
         
         def main():
-            logger.info("Starting scraping process...")
-            snapshots = get_snapshots()
+            args = parse_arguments()
+            logger.info(f"Starting scraping process for URL: {args.url}")
+            logger.info(f"Output folder: {args.folder}")
+            logger.info(f"README name: {args.readme}")
+            
+            snapshots = get_snapshots(args.url)
             logger.info(f"Found {len(snapshots)} snapshots")
             
             snapshots_content = []
             
             for snapshot in snapshots:
                 try:
-                    content = fetch_content(snapshot)
+                    content = fetch_content(snapshot, args.url)
                     snapshots_content.append((snapshot.timestamp, content))
                 except Exception as e:
                     logger.error(f"Error processing snapshot {snapshot.timestamp}: {str(e)}")
             
-            create_readme(snapshots_content)
+            create_readme(snapshots_content, args)
             logger.info("Scraping process completed")
         
         if __name__ == "__main__":
             main()
         EOF
-        python scraper.py
+        
+        # GitHub Actionsの入力パラメータを使用してスクリプトを実行
+        python scraper.py \
+          --url "${{ github.event.inputs.bbs_url }}" \
+          --folder "${{ github.event.inputs.folder_name }}" \
+          --readme "${{ github.event.inputs.readme_name }}" \
+          --domain "${{ github.event.inputs.domain_name }}"
     
     - name: Commit and push if changed
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add "tbmn bbs archive"
-        git commit -m "Update BBS archive with improved encoding $(date +'%Y-%m-%d')" || exit 0
+        git add "${{ github.event.inputs.folder_name }}"
+        git commit -m "Update BBS archive for ${{ github.event.inputs.domain_name }} ($(date +'%Y-%m-%d'))" || exit 0
         git push
