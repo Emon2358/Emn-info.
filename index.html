@@ -11,13 +11,11 @@
       font-family: sans-serif;
       background-color: #f5f5f5;
     }
-    /* ホーム画面用の中央揃えコンテナ */
     #homeContainer {
       max-width: 600px;
       margin: 40px auto;
       box-sizing: border-box;
     }
-    /* ホームセクションのスタイル */
     #home {
       background-color: #ffcccc;
       color: #000000;
@@ -52,7 +50,6 @@
       font-size: 0.9em;
       margin-top: 10px;
     }
-    /* プロジェクトセクションのスタイル */
     #project {
       display: none;
       text-align: left;
@@ -81,18 +78,19 @@
       color: blue;
       cursor: pointer;
     }
-    /* BBSアーカイブセクションのスタイル追加 */
     #bbs-archive {
       display: none;
       padding: 20px;
       margin: 20px;
+      background-color: #f5f5f5;
     }
     .bbs-content {
-      background-color: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      /* 背景色や角丸、影を削除し、bodyと同じ色 */
+      padding: 0;
       margin-top: 20px;
+      background-color: #f5f5f5;
+      border-radius: 0;
+      box-shadow: none;
     }
     .back-button {
       display: inline-block;
@@ -115,12 +113,12 @@
     async function showBBSArchive() {
       document.getElementById("project").style.display = "none";
       document.getElementById("bbs-archive").style.display = "block";
-      
       try {
         const response = await fetch('https://api.github.com/repos/Emon2358/Emn-info./contents/tbmn%20bbs%20archive/README.md');
         const data = await response.json();
         if (data.content) {
-          const content = atob(data.content);
+          // UTF-8デコード
+          const content = decodeURIComponent(escape(atob(data.content)));
           document.getElementById("bbs-content").innerHTML = marked.parse(content);
         }
       } catch (error) {
@@ -134,7 +132,6 @@
       document.getElementById("project").style.display = "block";
     }
   </script>
-  <!-- Marked.jsライブラリを追加（Markdownをレンダリングするため） -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
@@ -178,7 +175,7 @@
   <!-- BBSアーカイブセクション -->
   <section id="bbs-archive">
     <button class="back-button" onclick="goBackToProject()">戻る</button>
-    <h1>ナードコアに関わった人物、グループのbbs蒐集室</h1>
+    <h1>ナードコアに関わった人物のbbs蒐集室</h1>
     <div id="bbs-content" class="bbs-content">
       読み込み中...
     </div>
