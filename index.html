@@ -85,7 +85,6 @@
       background-color: #f5f5f5;
     }
     .bbs-content {
-      /* 背景色や角丸、影を削除し、bodyと同じ色 */
       padding: 0;
       margin-top: 20px;
       background-color: #f5f5f5;
@@ -102,6 +101,30 @@
       cursor: pointer;
       text-decoration: none;
       color: #333;
+    }
+    /* ナードコア作曲情報収集室のスタイル */
+    .compose-info-section {
+      margin-top: 40px;
+      padding: 20px 0 0 0;
+      background-color: #f5f5f5;
+    }
+    .compose-info-title {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin: 0 0 10px 0;
+    }
+    .compose-info-box {
+      margin-left: 20px;
+      margin-bottom: 20px;
+      padding-left: 10px;
+      border-left: 3px solid #bbb;
+    }
+    .compose-info-link {
+      display: block;
+      margin-top: 10px;
+      font-size: 1em;
+      color: #0645ad;
+      text-decoration: underline;
     }
   </style>
   <script>
@@ -178,6 +201,21 @@
     <h1>ナードコアに関わった人物のbbs蒐集室</h1>
     <div id="bbs-content" class="bbs-content">
       読み込み中...
+    </div>
+    <!-- ナードコア作曲情報収集室 -->
+    <div class="compose-info-section">
+      <div class="compose-info-title">ナードコア作曲情報収集室。</div>
+      <div class="compose-info-box">
+        <div>日本國民とhyper richの一部crewが使用</div>
+        <a 
+          class="compose-info-link" 
+          href="https://web.archive.org/web/20030806101650/http://www.synapse-audio.com/index.php" 
+          target="_blank" 
+          rel="noopener noreferrer"
+        >
+          https://web.archive.org/web/20030806101650/http://www.synapse-audio.com/index.php
+        </a>
+      </div>
     </div>
   </section>
 </body>
