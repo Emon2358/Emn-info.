@@ -78,6 +78,30 @@
       color: blue;
       cursor: pointer;
     }
+    /* ナードコア作曲情報収集室のスタイル */
+    .compose-info-section {
+      margin-top: 30px;
+      padding: 20px 0 0 0;
+      background-color: #f5f5f5;
+    }
+    .compose-info-title {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin: 0 0 10px 0;
+    }
+    .compose-info-box {
+      margin-left: 20px;
+      margin-bottom: 20px;
+      padding-left: 10px;
+      border-left: 3px solid #bbb;
+    }
+    .compose-info-link {
+      display: block;
+      margin-top: 10px;
+      font-size: 1em;
+      color: #0645ad;
+      text-decoration: underline;
+    }
     #bbs-archive {
       display: none;
       padding: 20px;
@@ -101,30 +125,6 @@
       cursor: pointer;
       text-decoration: none;
       color: #333;
-    }
-    /* ナードコア作曲情報収集室のスタイル */
-    .compose-info-section {
-      margin-top: 40px;
-      padding: 20px 0 0 0;
-      background-color: #f5f5f5;
-    }
-    .compose-info-title {
-      font-size: 1.2em;
-      font-weight: bold;
-      margin: 0 0 10px 0;
-    }
-    .compose-info-box {
-      margin-left: 20px;
-      margin-bottom: 20px;
-      padding-left: 10px;
-      border-left: 3px solid #bbb;
-    }
-    .compose-info-link {
-      display: block;
-      margin-top: 10px;
-      font-size: 1em;
-      color: #0645ad;
-      text-decoration: underline;
     }
   </style>
   <script>
@@ -190,19 +190,12 @@
         <li><a href="#">八掛通信</a></li>
         <li><a href="#">取扱説明書</a></li>
         <li><a href="#">経歴</a></li>
-        <li><a href="#" onclick="showBBSArchive()">ナードコアに関わった人物のbbs蒐集室</a></li>
+        <li>
+          <a href="#" onclick="showBBSArchive()">ナードコアに関わった人物のbbs蒐集室</a>
+        </li>
       </ul>
     </nav>
-  </section>
-
-  <!-- BBSアーカイブセクション -->
-  <section id="bbs-archive">
-    <button class="back-button" onclick="goBackToProject()">戻る</button>
-    <h1>ナードコアに関わった人物のbbs蒐集室</h1>
-    <div id="bbs-content" class="bbs-content">
-      読み込み中...
-    </div>
-    <!-- ナードコア作曲情報収集室 -->
+    <!-- ここから作曲情報収集室を追加 -->
     <div class="compose-info-section">
       <div class="compose-info-title">ナードコア作曲情報収集室。</div>
       <div class="compose-info-box">
@@ -216,6 +209,16 @@
           https://web.archive.org/web/20030806101650/http://www.synapse-audio.com/index.php
         </a>
       </div>
+    </div>
+    <!-- ここまで -->
+  </section>
+
+  <!-- BBSアーカイブセクション -->
+  <section id="bbs-archive">
+    <button class="back-button" onclick="goBackToProject()">戻る</button>
+    <h1>ナードコアに関わった人物のbbs蒐集室</h1>
+    <div id="bbs-content" class="bbs-content">
+      読み込み中...
     </div>
   </section>
 </body>
